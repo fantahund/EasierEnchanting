@@ -5,7 +5,8 @@
   "name": "Easier Enchanting",
   "description": "A mod that allow one to reroll enchantments",
   "authors": [
-    "sidit77"
+    "sidit77",
+    "fanta"
   ],
   "contributors": [],
   "contact": {
@@ -26,7 +27,7 @@
     "easierenchanting.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.9.0",
+    "fabricloader": ">=0.14.6",
     "fabric": "*"
   }
 }

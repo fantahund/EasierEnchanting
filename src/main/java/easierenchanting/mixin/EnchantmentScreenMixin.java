@@ -1,9 +1,7 @@
 package easierenchanting.mixin;
 
 import com.google.common.collect.Lists;
-import easierenchanting.EasierEnchanting;
 import easierenchanting.IEnchantmentScreenHandlerExtension;
-import net.fabricmc.loader.FabricLoader;
 import net.minecraft.client.gui.screen.ingame.EnchantmentScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -14,11 +12,10 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.EnchantmentScreenHandler;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import org.apache.logging.log4j.Level;
+import net.minecraft.util.math.random.Random;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,8 +26,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 @Mixin(EnchantmentScreen.class)
 public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentScreenHandler>  {
@@ -70,9 +65,9 @@ public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentSc
         if (bookopen && this.isPointWithinBounds(13, 18, 37, 21, (double)mouseX, (double)mouseY)) {
             int cost = ((IEnchantmentScreenHandlerExtension)this.handler).getLapisCost();
             List<Text> list = Lists.newArrayList();
-            list.add(new TranslatableText("container.enchant.reroll"));
-            TranslatableText lapiscost = new TranslatableText("container.enchant.lapis.many", cost);
-            list.add(LiteralText.EMPTY);
+            list.add(Text.translatable("container.enchant.reroll"));
+            MutableText lapiscost = Text.translatable("container.enchant.lapis.many", cost);
+            list.add(Text.literal(""));
             list.add(lapiscost.formatted(this.handler.getLapisCount() >= cost ? Formatting.GRAY : Formatting.RED));
             this.renderTooltip(matrices, list, mouseX, mouseY);
         }
@@ -83,7 +78,7 @@ public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentSc
     public void fullText(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, boolean bl, int i, int j, int k, Enchantment enchantment, int l, int m, List<Text> list){
         list.remove(0);
         list.addAll(0,
-                this.generateEnchantments(j, k).stream().map(e -> e.enchantment.getName(e.level)).collect(Collectors.toList()));
+                this.generateEnchantments(j, k).stream().map(e -> e.enchantment.getName(e.level)).toList());
 
     }
 
