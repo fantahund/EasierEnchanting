@@ -1,5 +1,8 @@
 # Easier Enchanting
 
+## Downloads
+* [Jenkins](https://jenkins.fantacs.de/view/Mods/job/EasierEnchanting/)
+* [CurseForge](https://www.curseforge.com/minecraft/mc-mods/easier-enchanting-updatet)
 
 
 ## Description
