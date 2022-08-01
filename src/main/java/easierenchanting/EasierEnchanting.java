@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class EasierEnchanting implements ModInitializer {
 
@@ -19,22 +19,36 @@ public class EasierEnchanting implements ModInitializer {
     public static final String MOD_NAME = "Easier Enchanting";
 
     public static int lapiscost = 6;
+    public static int levelcost = 3;
+    public static boolean uselevel = false;
 
     @Override
     public void onInitialize() {
 
         log(Level.INFO, "Initializing..");
         try {
-            Path p = Paths.get("config/easierenchanting.txt");
-            if(!Files.exists(p)){
+            Path path = Path.of("config/easierenchanting.txt");
+            if (!Files.exists(path)) {
                 log(Level.INFO, "config not found");
                 log(Level.INFO, "creating new config file");
-                Files.write(Paths.get("config/easierenchanting.txt"), Collections.singletonList("lapiscost:6"));
+
+                Collection<String> collection = new ArrayList<>();
+                collection.add("lapiscost:6");
+                collection.add("uselevel:false");
+                collection.add("levelcost:3");
+                Files.write(path, collection);
             }
-            for(String s : Files.readAllLines(p)){
+            for (String s : Files.readAllLines(path)) {
                 String[] tokens = s.split(":");
-                if ("lapiscost".equals(tokens[0].trim())) {
-                    lapiscost = Math.max(0, Integer.parseInt(tokens[1].trim()));
+                switch (tokens[0].trim()) {
+                    case "lapiscost" -> lapiscost = Math.max(0, Integer.parseInt(tokens[1].trim()));
+                    case "levelcost" -> levelcost = Math.max(0, Integer.parseInt(tokens[1].trim()));
+                    case "uselevel" -> uselevel = Boolean.parseBoolean(tokens[1].trim());
+                }
+
+                if (uselevel) {
+                    log(Level.INFO, "setting level cost to " + levelcost);
+                } else {
                     log(Level.INFO, "setting lapis cost to " + lapiscost);
                 }
             }
@@ -43,8 +57,8 @@ public class EasierEnchanting implements ModInitializer {
         }
     }
 
-    public static void log(Level level, String message){
-        LOGGER.log(level, "["+MOD_NAME+"] " + message);
+    public static void log(Level level, String message) {
+        LOGGER.log(level, "[" + MOD_NAME + "] " + message);
     }
 
 }

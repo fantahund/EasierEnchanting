@@ -31,6 +31,10 @@ public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler implem
     @Final
     private Property easierenchant_cost;
 
+    @Mutable
+    @Final
+    private Property easierenchant_levelcost;
+
     @Shadow
     @Final
     private Inventory inventory;
@@ -48,34 +52,55 @@ public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler implem
     public int[] enchantmentPower;
 
     @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V", at = @At(value = "RETURN"))
-    public void init(CallbackInfo ci){
+    public void init(CallbackInfo ci) {
         easierenchant_cost = Property.create();
         this.addProperty(easierenchant_cost).set(EasierEnchanting.lapiscost);
+
+        easierenchant_levelcost = Property.create();
+        this.addProperty(easierenchant_levelcost).set(EasierEnchanting.levelcost);
     }
 
     @Inject(method = "onButtonClick", at = @At(value = "HEAD"), cancellable = true)
-    public void buttonClick(PlayerEntity player, int id, CallbackInfoReturnable<Boolean> ci){
-        if(id == 3){
-            ItemStack itemStack2 = this.inventory.getStack(1);
-            if((itemStack2.getCount() < getLapisCost() && !player.getAbilities().creativeMode)
-               || this.enchantmentPower[0] <= 0){
-                ci.setReturnValue(false);
-                return;
-            }
-            this.context.run((world, blockPos) -> {
-                if (!player.getAbilities().creativeMode) {
-                    itemStack2.decrement(getLapisCost());
-                    if (itemStack2.isEmpty()) {
-                        this.inventory.setStack(1, ItemStack.EMPTY);
-                    }
+    public void buttonClick(PlayerEntity player, int id, CallbackInfoReturnable<Boolean> ci) {
+        if (id == 3) {
+            if (!EasierEnchanting.uselevel) {
+                ItemStack itemStack2 = this.inventory.getStack(1);
+                if ((itemStack2.getCount() < getLapisCost() && !player.getAbilities().creativeMode) || this.enchantmentPower[0] <= 0) {
+                    ci.setReturnValue(false);
+                    return;
                 }
+                this.context.run((world, blockPos) -> {
+                    if (!player.getAbilities().creativeMode) {
+                        itemStack2.decrement(getLapisCost());
+                        if (itemStack2.isEmpty()) {
+                            this.inventory.setStack(1, ItemStack.EMPTY);
+                        }
+                    }
 
-                player.applyEnchantmentCosts(null, 0);
-                this.inventory.markDirty();
-                this.seed.set(player.getEnchantmentTableSeed());
-                this.onContentChanged(this.inventory);
-                world.playSound(null, blockPos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, world.random.nextFloat() * 0.1F + 0.9F);
-            });
+                    player.applyEnchantmentCosts(null, 0);
+                    this.inventory.markDirty();
+                    this.seed.set(player.getEnchantmentTableSeed());
+                    this.onContentChanged(this.inventory);
+                    world.playSound(null, blockPos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, world.random.nextFloat() * 0.1F + 0.9F);
+                });
+            } else {
+                if ((player.experienceLevel < getLevelCost() && !player.getAbilities().creativeMode) || this.enchantmentPower[0] <= 0) {
+                    ci.setReturnValue(false);
+                    return;
+                }
+                this.context.run((world, blockPos) -> {
+                    if (!player.getAbilities().creativeMode) {
+                        player.applyEnchantmentCosts(null, getLevelCost());
+                    } else {
+                        player.applyEnchantmentCosts(null, 0);
+                    }
+
+                    this.inventory.markDirty();
+                    this.seed.set(player.getEnchantmentTableSeed());
+                    this.onContentChanged(this.inventory);
+                    world.playSound(null, blockPos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, world.random.nextFloat() * 0.1F + 0.9F);
+                });
+            }
             ci.setReturnValue(true);
         }
     }
@@ -83,6 +108,11 @@ public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler implem
     @Override
     public int getLapisCost() {
         return easierenchant_cost.get();
+    }
+
+    @Override
+    public int getLevelCost() {
+        return easierenchant_levelcost.get();
     }
 
 }

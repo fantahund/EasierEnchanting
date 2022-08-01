@@ -1,6 +1,7 @@
 package easierenchanting.mixin;
 
 import com.google.common.collect.Lists;
+import easierenchanting.EasierEnchanting;
 import easierenchanting.IEnchantmentScreenHandlerExtension;
 import net.minecraft.client.gui.screen.ingame.EnchantmentScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -63,13 +64,26 @@ public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentSc
             }
         }
         if (bookopen && this.isPointWithinBounds(13, 18, 37, 21, (double)mouseX, (double)mouseY)) {
-            int cost = ((IEnchantmentScreenHandlerExtension)this.handler).getLapisCost();
-            List<Text> list = Lists.newArrayList();
-            list.add(Text.translatable("container.enchant.reroll"));
-            MutableText lapiscost = Text.translatable("container.enchant.lapis.many", cost);
-            list.add(Text.literal(""));
-            list.add(lapiscost.formatted(this.handler.getLapisCount() >= cost ? Formatting.GRAY : Formatting.RED));
-            this.renderTooltip(matrices, list, mouseX, mouseY);
+
+
+            if (!EasierEnchanting.uselevel) {
+                int cost = ((IEnchantmentScreenHandlerExtension)this.handler).getLapisCost();
+                List<Text> list = Lists.newArrayList();
+                list.add(Text.translatable("container.enchant.reroll"));
+                MutableText lapiscost = Text.translatable("container.enchant.lapis.many", cost);
+                list.add(Text.literal(""));
+                list.add(lapiscost.formatted(this.handler.getLapisCount() >= cost ? Formatting.GRAY : Formatting.RED));
+                this.renderTooltip(matrices, list, mouseX, mouseY);
+            } else {
+                int cost = ((IEnchantmentScreenHandlerExtension)this.handler).getLevelCost();
+                List<Text> list = Lists.newArrayList();
+                list.add(Text.translatable("container.enchant.reroll"));
+                MutableText lapiscost = Text.translatable("container.enchant.level.many", cost);
+                list.add(Text.literal(""));
+                list.add(lapiscost.formatted(this.client.player.experienceLevel >= cost ? Formatting.GRAY : Formatting.RED));
+                this.renderTooltip(matrices, list, mouseX, mouseY);
+            }
+
         }
     }
 

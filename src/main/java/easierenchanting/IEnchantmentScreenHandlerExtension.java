@@ -7,4 +7,6 @@ import java.util.List;
 public interface IEnchantmentScreenHandlerExtension {
 
     int getLapisCost();
+
+    int getLevelCost();
 }
