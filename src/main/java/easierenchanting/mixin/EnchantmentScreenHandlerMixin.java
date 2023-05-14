@@ -1,5 +1,6 @@
 package easierenchanting.mixin;
 
+import easierenchanting.Config;
 import easierenchanting.EasierEnchanting;
 import easierenchanting.IEnchantmentScreenHandlerExtension;
 import net.minecraft.entity.player.PlayerEntity;
@@ -54,16 +55,16 @@ public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler implem
     @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V", at = @At(value = "RETURN"))
     public void init(CallbackInfo ci) {
         easierenchant_cost = Property.create();
-        this.addProperty(easierenchant_cost).set(EasierEnchanting.lapiscost);
+        this.addProperty(easierenchant_cost).set(Config.lapisCost);
 
         easierenchant_levelcost = Property.create();
-        this.addProperty(easierenchant_levelcost).set(EasierEnchanting.levelcost);
+        this.addProperty(easierenchant_levelcost).set(Config.levelCost);
     }
 
     @Inject(method = "onButtonClick", at = @At(value = "HEAD"), cancellable = true)
     public void buttonClick(PlayerEntity player, int id, CallbackInfoReturnable<Boolean> ci) {
-        if (id == 3 && EasierEnchanting.enablereroll) {
-            if (!EasierEnchanting.uselevel) {
+        if (id == 3 && Config.enableReroll) {
+            if (!Config.useLevel) {
                 ItemStack itemStack2 = this.inventory.getStack(1);
                 if ((itemStack2.getCount() < getLapisCost() && !player.getAbilities().creativeMode) || this.enchantmentPower[0] <= 0) {
                     ci.setReturnValue(false);
