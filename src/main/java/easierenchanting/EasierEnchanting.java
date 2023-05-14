@@ -21,8 +21,8 @@ public class EasierEnchanting implements ModInitializer {
     public static int lapiscost = 6;
     public static int levelcost = 3;
     public static boolean uselevel = false;
-    public static boolean enablereroll = false;
-    public static boolean enablefulltext = false;
+    public static boolean enablereroll = true;
+    public static boolean enablefulltext = true;
 
     @Override
     public void onInitialize() {
