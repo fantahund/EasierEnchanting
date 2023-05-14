@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.List;
 
 @Mixin(EnchantmentScreen.class)
-public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentScreenHandler>  {
+public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentScreenHandler> {
     public EnchantmentScreenMixin(EnchantmentScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
     }
@@ -42,7 +42,7 @@ public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentSc
     private ItemStack stack;
 
     @Inject(method = "mouseClicked", at = @At(value = "TAIL"), cancellable = true)
-    public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> ci){
+    public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> ci) {
         if (EasierEnchanting.enablereroll) {
             int i = (this.width - this.backgroundWidth) / 2;
             int j = (this.height - this.backgroundHeight) / 2;
@@ -57,20 +57,18 @@ public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentSc
     }
 
     @Inject(method = "render", at = @At(value = "TAIL"))
-    public void bookButton(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci){
+    public void bookButton(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (EasierEnchanting.enablereroll) {
             boolean bookopen = false;
-            for(int i2 = 0; i2 < 3; ++i2) {
+            for (int i2 = 0; i2 < 3; ++i2) {
                 if (this.handler.enchantmentPower[i2] != 0) {
                     bookopen = true;
                     break;
                 }
             }
-            if (bookopen && this.isPointWithinBounds(13, 18, 37, 21, (double)mouseX, (double)mouseY)) {
-
-
+            if (bookopen && this.isPointWithinBounds(13, 18, 37, 21, (double) mouseX, (double) mouseY)) {
                 if (!EasierEnchanting.uselevel) {
-                    int cost = ((IEnchantmentScreenHandlerExtension)this.handler).getLapisCost();
+                    int cost = ((IEnchantmentScreenHandlerExtension) this.handler).getLapisCost();
                     List<Text> list = Lists.newArrayList();
                     list.add(Text.translatable("container.enchant.reroll"));
                     MutableText lapiscost = Text.translatable("container.enchant.lapis.many", cost);
@@ -78,7 +76,7 @@ public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentSc
                     list.add(lapiscost.formatted(this.handler.getLapisCount() >= cost ? Formatting.GRAY : Formatting.RED));
                     this.renderTooltip(matrices, list, mouseX, mouseY);
                 } else {
-                    int cost = ((IEnchantmentScreenHandlerExtension)this.handler).getLevelCost();
+                    int cost = ((IEnchantmentScreenHandlerExtension) this.handler).getLevelCost();
                     List<Text> list = Lists.newArrayList();
                     list.add(Text.translatable("container.enchant.reroll"));
                     MutableText lapiscost = Text.translatable("container.enchant.level.many", cost);
@@ -91,18 +89,16 @@ public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentSc
         }
     }
 
-    @Inject(method = "render", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target =
-            "Lnet/minecraft/client/gui/screen/ingame/EnchantmentScreen;renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V"))
-    public void fullText(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, boolean bl, int i, int j, int k, Enchantment enchantment, int l, int m, List<Text> list){
+    @Inject(method = "render", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/client/gui/screen/ingame/EnchantmentScreen;renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V"))
+    public void fullText(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, boolean bl, int i, int j, int k, Enchantment enchantment, int l, int m, List<Text> list) {
         if (EasierEnchanting.enablefulltext) {
             list.remove(0);
-            list.addAll(0,
-                    this.generateEnchantments(j, k).stream().map(e -> e.enchantment.getName(e.level)).toList());
+            list.addAll(0, this.generateEnchantments(j, k).stream().map(e -> e.enchantment.getName(e.level)).toList());
         }
     }
 
     private List<EnchantmentLevelEntry> generateEnchantments(int slot, int level) {
-        this.random.setSeed((long)(this.handler.getSeed() + slot));
+        this.random.setSeed((long) (this.handler.getSeed() + slot));
         List<EnchantmentLevelEntry> list = EnchantmentHelper.generateEnchantments(this.random, stack, level, false);
         if (stack.getItem() == Items.BOOK && list.size() > 1) {
             list.remove(this.random.nextInt(list.size()));

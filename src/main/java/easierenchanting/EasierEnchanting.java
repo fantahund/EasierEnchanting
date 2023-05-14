@@ -52,10 +52,9 @@ public class EasierEnchanting implements ModInitializer {
                     case "enablefulltext" -> enablefulltext = Boolean.parseBoolean(tokens[1].trim());
                 }
 
-                if (enablereroll) {
+                if (!enablereroll) {
                     log(Level.INFO, "reroll disabled");
-                }
-                else if (uselevel) {
+                } else if (uselevel) {
                     log(Level.INFO, "setting level cost to " + levelcost);
                 } else {
                     log(Level.INFO, "setting lapis cost to " + lapiscost);
