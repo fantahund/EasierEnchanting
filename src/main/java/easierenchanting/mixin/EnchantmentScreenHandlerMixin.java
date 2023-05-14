@@ -62,7 +62,7 @@ public abstract class EnchantmentScreenHandlerMixin extends ScreenHandler implem
 
     @Inject(method = "onButtonClick", at = @At(value = "HEAD"), cancellable = true)
     public void buttonClick(PlayerEntity player, int id, CallbackInfoReturnable<Boolean> ci) {
-        if (id == 3) {
+        if (id == 3 && EasierEnchanting.enablereroll) {
             if (!EasierEnchanting.uselevel) {
                 ItemStack itemStack2 = this.inventory.getStack(1);
                 if ((itemStack2.getCount() < getLapisCost() && !player.getAbilities().creativeMode) || this.enchantmentPower[0] <= 0) {

@@ -21,6 +21,8 @@ public class EasierEnchanting implements ModInitializer {
     public static int lapiscost = 6;
     public static int levelcost = 3;
     public static boolean uselevel = false;
+    public static boolean enablereroll = true;
+    public static boolean enablefulltext = true;
 
     @Override
     public void onInitialize() {
@@ -34,8 +36,10 @@ public class EasierEnchanting implements ModInitializer {
 
                 Collection<String> collection = new ArrayList<>();
                 collection.add("lapiscost:6");
-                collection.add("uselevel:false");
                 collection.add("levelcost:3");
+                collection.add("uselevel:false");
+                collection.add("enablereroll:true");
+                collection.add("enablefulltext:true");
                 Files.write(path, collection);
             }
             for (String s : Files.readAllLines(path)) {
@@ -44,9 +48,14 @@ public class EasierEnchanting implements ModInitializer {
                     case "lapiscost" -> lapiscost = Math.max(0, Integer.parseInt(tokens[1].trim()));
                     case "levelcost" -> levelcost = Math.max(0, Integer.parseInt(tokens[1].trim()));
                     case "uselevel" -> uselevel = Boolean.parseBoolean(tokens[1].trim());
+                    case "enablereroll" -> enablereroll = Boolean.parseBoolean(tokens[1].trim());
+                    case "enablefulltext" -> enablefulltext = Boolean.parseBoolean(tokens[1].trim());
                 }
 
-                if (uselevel) {
+                if (enablereroll) {
+                    log(Level.INFO, "reroll disabled");
+                }
+                else if (uselevel) {
                     log(Level.INFO, "setting level cost to " + levelcost);
                 } else {
                     log(Level.INFO, "setting lapis cost to " + lapiscost);
