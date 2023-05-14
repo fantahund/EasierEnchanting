@@ -37,6 +37,10 @@ public class Config {
     }
 
     public static void deserialize() {
+        deserialize(true);
+    }
+
+    public static void deserialize(boolean save) {
         Properties prop = new Properties();
         try {
             InputStream s = Files.newInputStream(configPath);
@@ -47,21 +51,19 @@ public class Config {
             enableReroll = Boolean.parseBoolean(prop.getProperty("enableReroll", "true"));
             enableFulltext = Boolean.parseBoolean(prop.getProperty("enableFulltext", "true"));
 
-            if (!enableReroll) {
-                EasierEnchanting.LOGGER.log(Level.INFO, "reroll disabled");
-            }
-            if (!enableFulltext) {
-                EasierEnchanting.LOGGER.log(Level.INFO, "fulltext disabled");
-            }
-            if (useLevel) {
-                EasierEnchanting.LOGGER.log(Level.INFO, "setting level cost to " + levelCost);
-            } else {
-                EasierEnchanting.LOGGER.log(Level.INFO, "setting lapis cost to " + lapisCost);
-            }
 
+            EasierEnchanting.LOGGER.log(Level.INFO, "reroll " + (enableReroll ? "enabled" : "disabled"));
+            EasierEnchanting.LOGGER.log(Level.INFO, "fulltext " + (enableFulltext ? "enabled" : "disabled"));
+            EasierEnchanting.LOGGER.log(Level.INFO, "setting " + (useLevel ? "level" : "lapis") + " cost to " + (useLevel ? levelCost : lapisCost));
         } catch (IOException e) {
             EasierEnchanting.LOGGER.warn("Failed to read config!");
         }
-        Config.serialize();
+        if (save) {
+            Config.serialize();
+        }
+    }
+
+    public static void loadDefaults() {
+        deserialize(false);
     }
 }
