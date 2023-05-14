@@ -1,1 +1,3 @@
-- Update 1.19.4
+- The config is now synced with the server
+- You can disable the rolling and display of all enchantments in the config.
+- The internal ConfigAPi has been reworked, so the old config is no longer compatible and has been replaced by the "easierenchanting.properties". (So if you made changes you have to enter them there again).
