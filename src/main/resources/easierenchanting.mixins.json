@@ -7,7 +7,6 @@
     "PlayerEntityMixin"
   ],
   "client": [
-    "APIMixinNetHandlerPlayClient",
     "EnchantmentScreenMixin"
   ],
   "server": [],

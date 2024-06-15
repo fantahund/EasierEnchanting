@@ -2,11 +2,10 @@ package easierenchanting.mixin;
 
 import com.google.common.collect.Lists;
 import easierenchanting.Config;
-import easierenchanting.EasierEnchanting;
 import easierenchanting.IEnchantmentScreenHandlerExtension;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.EnchantmentScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
@@ -58,7 +57,7 @@ public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentSc
     }
 
     @Inject(method = "render", at = @At(value = "TAIL"))
-    public void bookButton(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    public void bookButton(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (Config.enableReroll) {
             boolean bookopen = false;
             for (int i2 = 0; i2 < 3; ++i2) {
@@ -75,7 +74,7 @@ public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentSc
                     MutableText lapiscost = Text.translatable("container.enchant.lapis.many", cost);
                     list.add(Text.literal(""));
                     list.add(lapiscost.formatted(this.handler.getLapisCount() >= cost ? Formatting.GRAY : Formatting.RED));
-                    this.renderTooltip(matrices, list, mouseX, mouseY);
+                    context.drawTooltip(textRenderer, list, mouseX, mouseY);
                 } else {
                     int cost = ((IEnchantmentScreenHandlerExtension) this.handler).getLevelCost();
                     List<Text> list = Lists.newArrayList();
@@ -83,15 +82,15 @@ public abstract class EnchantmentScreenMixin extends HandledScreen<EnchantmentSc
                     MutableText lapiscost = Text.translatable("container.enchant.level.many", cost);
                     list.add(Text.literal(""));
                     list.add(lapiscost.formatted(this.client.player.experienceLevel >= cost ? Formatting.GRAY : Formatting.RED));
-                    this.renderTooltip(matrices, list, mouseX, mouseY);
+                    context.drawTooltip(textRenderer, list, mouseX, mouseY);
                 }
 
             }
         }
     }
 
-    @Inject(method = "render", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/client/gui/screen/ingame/EnchantmentScreen;renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V"))
-    public void fullText(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, boolean bl, int i, int j, int k, Enchantment enchantment, int l, int m, List<Text> list) {
+    @Inject(method = "render", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/client/gui/DrawContext;drawTooltip(Lnet/minecraft/client/font/TextRenderer;Ljava/util/List;II)V"))
+    public void fullText(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci, boolean bl, int i, int j, int k, Enchantment enchantment, int l, int m, List<Text> list) {
         if (Config.enableFulltext) {
             list.remove(0);
             list.addAll(0, this.generateEnchantments(j, k).stream().map(e -> e.enchantment.getName(e.level)).toList());

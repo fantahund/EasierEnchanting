@@ -1,7 +1,6 @@
 package easierenchanting.mixin;
 
 import easierenchanting.Config;
-import easierenchanting.EasierEnchanting;
 import easierenchanting.IEnchantmentScreenHandlerExtension;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;

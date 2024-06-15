@@ -5,7 +5,6 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
@@ -84,35 +83,5 @@ public class Config {
         settings.put("enableFulltext", Config.enableFulltext);
         packetByteBuf.writeString(new Gson().toJson(settings));
         sender.sendPacket(EasierEnchanting.CHANNEL_IDENTIFIER, packetByteBuf);
-    }
-
-    public static boolean handleCustomPayload(CustomPayloadS2CPacket packet) {
-        PacketByteBuf buffer = packet.getData();
-        String channelName = packet.getChannel().toString();
-        if (channelName.equals("easierenchanting:config")) {
-            String jsonString = buffer.readString();
-            @SuppressWarnings("unchecked")
-            Map<String, Object> settings = new Gson().fromJson(jsonString, Map.class);
-            for (Map.Entry<String, Object> entry : settings.entrySet()) {
-                String setting = entry.getKey();
-                Object value = entry.getValue();
-                switch (setting) {
-                    case "lapisCost" -> {
-                        Double data = (Double) value;
-                        Config.lapisCost = data.intValue();
-                    }
-                    case "levelCost" -> {
-                        Double data = (Double) value;
-                        Config.levelCost = data.intValue();
-                    }
-                    case "useLevel" -> Config.useLevel = (Boolean) value;
-                    case "enableReroll" -> Config.enableReroll = (Boolean) value;
-                    case "enableFulltext" -> Config.enableFulltext = (Boolean) value;
-                    default -> EasierEnchanting.LOGGER.warn("Unknown configuration option " + setting);
-                }
-            }
-            return true;
-        }
-        return false;
     }
 }
